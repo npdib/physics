@@ -56,6 +56,7 @@ bool init_renderer()
 	g_renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 	if (g_renderer != NULL)
 	{
+		SDL_SetRenderDrawColor(g_renderer, 0xFF, 0xFF, 0xFF, 0xFF);
 		success = true;
 	}
 	else
@@ -112,8 +113,22 @@ int main(int argc, char* args[])
 			{
 				if (e.type == SDL_QUIT) 
 					quit = true;
+
+				switch (e.key.keysym.sym)
+				{
+				case SDLK_RIGHT:
+					SDL_SetRenderDrawColor(g_renderer, 0xFF, 0x00, 0xFF, 0xFF);
+					break;
+				case SDLK_LEFT:
+					SDL_SetRenderDrawColor(g_renderer, 0xFF, 0xFF, 0xFF, 0xFF);
+					break;
+				default:
+					break;
+				}
+
 			}
 
+			SDL_RenderFillRect(g_renderer, NULL);
 			//Update the surface
 			SDL_RenderPresent(g_renderer);
 		}
