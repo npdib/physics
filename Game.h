@@ -9,22 +9,28 @@ private:
 	static constexpr int kScreenWidth = 640;
 	static constexpr int kScreenHeight = 480;
 
-	//The window we'll be rendering to
-	SDL_Window* window;
+	//The mWindow we'll be rendering to
+	SDL_Window* mWindow;
 
-	//The surface contained by the window
-	SDL_Surface* screenSurface;
+	//The surface contained by the mWindow
+	SDL_Surface* mSurface;
 
 	// Renderer
-	SDL_Renderer* g_renderer;
+	SDL_Renderer* mRenderer;
 
 	// Event for the event handler
-	SDL_Event e;
+	SDL_Event mEvent;
+
+	// background
+	SDL_Surface* mBackgroundImage;
+	SDL_Texture* mBackground;
+
 	bool mQuit;
 
+	bool init_sdl(void);
 	bool init_window(void);
 	bool init_renderer(void);
-
+	bool load_background(void);
 	void poll_events(void);
 
 public:

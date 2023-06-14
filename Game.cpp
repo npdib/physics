@@ -2,16 +2,32 @@
 
 // private:
 
+bool Game::init_sdl()
+{
+	bool success = false;
+
+	if (SDL_Init(SDL_INIT_VIDEO) >= 0)
+	{
+		success = true;
+	}
+	else
+	{
+		printf("SDL could not initialize! SDL_Error: %s\n", SDL_GetError());
+	}
+
+	return success;
+}
+
 bool Game::init_window()
 {
 	bool success = false;
 
-	//Create window
-	window = SDL_CreateWindow("SDL Tutorial", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, kScreenWidth, kScreenHeight, SDL_WINDOW_SHOWN);
-	if (window != NULL)
+	//Create mWindow
+	mWindow = SDL_CreateWindow("physics ...", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, kScreenWidth, kScreenHeight, SDL_WINDOW_SHOWN);
+	if (mWindow != nullptr)
 	{
-		//Get window surface
-		screenSurface = SDL_GetWindowSurface(window);
+		//Get mWindow surface
+		mSurface = SDL_GetWindowSurface(mWindow);
 
 		success = true;
 	}
@@ -28,10 +44,10 @@ bool Game::init_renderer()
 	bool success = false;
 
 	//Create renderer
-	g_renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
-	if (g_renderer != NULL)
+	mRenderer = SDL_CreateRenderer(mWindow, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+	if (mRenderer != nullptr)
 	{
-		SDL_SetRenderDrawColor(g_renderer, 0xFF, 0xFF, 0xFF, 0xFF);
+		SDL_SetRenderDrawColor(mRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
 		success = true;
 	}
 	else
@@ -42,22 +58,41 @@ bool Game::init_renderer()
 	return success;
 }
 
+bool Game::load_background()
+{
+	bool success = false;
+
+	mBackgroundImage = SDL_LoadBMP("Images/brick_wall.bmp");
+
+	if (mBackgroundImage != nullptr)
+	{
+		mBackground = SDL_CreateTextureFromSurface(mRenderer, mBackgroundImage);
+		success = true;
+	}
+	else
+	{
+		printf("Background could not be loaded! SDL_Error: %s\n", SDL_GetError());
+	}
+	return success;
+}
+
+
 
 void Game::poll_events()
 {
 	// event polling
-	while (SDL_PollEvent(&e))
+	while (SDL_PollEvent(&mEvent))
 	{
-		if (e.type == SDL_QUIT)
+		if (mEvent.type == SDL_QUIT)
 			mQuit = true;
 
-		switch (e.key.keysym.sym)
+		switch (mEvent.key.keysym.sym)
 		{
 		case SDLK_RIGHT:
-			SDL_SetRenderDrawColor(g_renderer, 0xFF, 0x00, 0xFF, 0xFF);
+			SDL_SetRenderDrawColor(mRenderer, 0xFF, 0x00, 0xFF, 0xFF);
 			break;
 		case SDLK_LEFT:
-			SDL_SetRenderDrawColor(g_renderer, 0xFF, 0xFF, 0xFF, 0xFF);
+			SDL_SetRenderDrawColor(mRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
 			break;
 		default:
 			break;
@@ -68,24 +103,24 @@ void Game::poll_events()
 
 // public:
 
-Game::Game() : window(nullptr), screenSurface(nullptr), g_renderer(nullptr), mQuit(false)
+Game::Game() : mWindow(nullptr), mSurface(nullptr), mRenderer(nullptr), mBackgroundImage(nullptr), mBackground(nullptr), mQuit(false)
 {
-	if (SDL_Init(SDL_INIT_VIDEO) >= 0)
-	{
-		mQuit = !init_window() || !init_renderer();
-	}
-	else
-	{
-		printf("SDL could not initialize! SDL_Error: %s\n", SDL_GetError());
-		mQuit = true;
-	}
+	mQuit = !init_sdl() || !init_window() || !init_renderer() || !load_background();
 }
 
 Game::~Game()
 {
-	printf("running destructor...\n");
-	//Destroy window
-	SDL_DestroyWindow(window);
+	// Deallocate surface
+	SDL_FreeSurface(mBackgroundImage);
+	mBackgroundImage = nullptr;
+
+	// destroy renderer
+	SDL_DestroyRenderer(mRenderer);
+	mRenderer = nullptr;
+
+	//Destroy mWindow
+	SDL_DestroyWindow(mWindow);
+	mWindow = nullptr;
 
 	//Quit SDL subsystems
 	SDL_Quit();
@@ -105,7 +140,7 @@ void Game::run()
 
 void Game::render()
 {
-	SDL_RenderFillRect(g_renderer, NULL);
+	SDL_RenderCopy(mRenderer, mBackground, nullptr, nullptr);
 	//Update the surface
-	SDL_RenderPresent(g_renderer);
+	SDL_RenderPresent(mRenderer);
 }
