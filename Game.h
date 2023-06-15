@@ -1,6 +1,7 @@
 #pragma once
 #include <stdio.h>
 #include <SDL.h>
+#include "Object.h"
 
 class Game
 {
@@ -24,6 +25,8 @@ private:
 	// background
 	SDL_Surface* mBackgroundImage;
 	SDL_Texture* mBackground;
+
+	Object* object;
 
 	bool mQuit;
 

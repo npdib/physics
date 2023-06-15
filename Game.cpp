@@ -106,6 +106,9 @@ void Game::poll_events()
 Game::Game() : mWindow(nullptr), mSurface(nullptr), mRenderer(nullptr), mBackgroundImage(nullptr), mBackground(nullptr), mQuit(false)
 {
 	mQuit = !init_sdl() || !init_window() || !init_renderer() || !load_background();
+
+	object = new Object("images/ball.bmp", 50, 50, 50, 50, mRenderer);
+	
 }
 
 Game::~Game()
@@ -147,6 +150,7 @@ void Game::run()
 void Game::render()
 {
 	SDL_RenderCopy(mRenderer, mBackground, nullptr, nullptr);
+	object->render();
 	//Update the surface
 	SDL_RenderPresent(mRenderer);
 }
