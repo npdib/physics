@@ -112,11 +112,17 @@ Game::~Game()
 {
 	// Deallocate surface
 	SDL_FreeSurface(mBackgroundImage);
+	SDL_DestroyTexture(mBackground);
 	mBackgroundImage = nullptr;
+	mBackground = nullptr;
 
 	// destroy renderer
 	SDL_DestroyRenderer(mRenderer);
 	mRenderer = nullptr;
+
+	// destroy surface
+	SDL_FreeSurface(mSurface);
+	mSurface = nullptr;
 
 	//Destroy mWindow
 	SDL_DestroyWindow(mWindow);
