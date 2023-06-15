@@ -21,6 +21,7 @@ public:
 	~Object();
 
 	void render(void);
+	void getPos(uint16_t& x, uint16_t& y);
 
 };
 

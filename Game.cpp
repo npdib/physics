@@ -94,21 +94,25 @@ void Game::poll_events()
 		case SDLK_LEFT:
 			SDL_SetRenderDrawColor(mRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
 			break;
+		case SDLK_SPACE:
+		{
+			Object temp("images/ball.bmp", rand() % kScreenWidth, rand() % kScreenHeight, 50, 50, mRenderer);
+			mObjects.push_back(temp);
+			break;
+		}
 		default:
 			break;
 		}
 	}
 }
 
-
 // public:
 
 Game::Game() : mWindow(nullptr), mSurface(nullptr), mRenderer(nullptr), mBackgroundImage(nullptr), mBackground(nullptr), mQuit(false)
 {
 	mQuit = !init_sdl() || !init_window() || !init_renderer() || !load_background();
-
-	object = new Object("images/ball.bmp", 50, 50, 50, 50, mRenderer);
-	
+	Object temp("images/ball.bmp", 50, 50, 50, 50, mRenderer);
+	mObjects.push_back(temp);
 }
 
 Game::~Game()
@@ -140,17 +144,29 @@ bool Game::running()
 	return !mQuit;
 }
 
-
 void Game::run()
 {
 	poll_events();
 }
 
-
 void Game::render()
 {
+	int counter = 0;
 	SDL_RenderCopy(mRenderer, mBackground, nullptr, nullptr);
-	object->render();
+	for(auto it = mObjects.begin(); it != mObjects.end(); ++it)
+	{
+		it->render();
+		counter++;
+		printf("rendered %d ball", counter);
+	}
+
+	/*for (auto image = mObjects.begin(); image < mObjects.end(); image++)
+	{
+		image->render();
+		uint16_t x, y;
+		image->getPos(x, y);
+		printf("rendering object at x: %d,\ty: %d\n", x, y);
+	}*/
 	//Update the surface
 	SDL_RenderPresent(mRenderer);
 }

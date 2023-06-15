@@ -1,6 +1,9 @@
 #pragma once
+#include <list>
 #include <stdio.h>
 #include <SDL.h>
+#include <vector>
+
 #include "Object.h"
 
 class Game
@@ -26,7 +29,7 @@ private:
 	SDL_Surface* mBackgroundImage;
 	SDL_Texture* mBackground;
 
-	Object* object;
+	std::list<Object> mObjects;
 
 	bool mQuit;
 
