@@ -1,10 +1,7 @@
 #pragma once
 #include <list>
-#include <stdio.h>
 #include <SDL.h>
-#include <vector>
-
-#include "Object.h"
+#include "Ball.h"
 
 class Game
 {

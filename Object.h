@@ -4,7 +4,7 @@
 
 class Object
 {
-private:
+protected:
 	// basic properties
 	uint16_t mXpos;
 	uint16_t mYpos;

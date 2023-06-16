@@ -1,7 +1,5 @@
 #include "Game.h"
 
-#include <vcruntime_typeinfo.h>
-
 // private:
 
 bool Game::init_sdl()
@@ -85,23 +83,35 @@ void Game::poll_events()
 	// event polling
 	while (SDL_PollEvent(&mEvent))
 	{
-		if (mEvent.type == SDL_QUIT)
+		switch (mEvent.type)
+		{
+		case SDL_QUIT:
 			mQuit = true;
-
-		switch (mEvent.key.keysym.sym)
-		{
-		case SDLK_RIGHT:
-			SDL_SetRenderDrawColor(mRenderer, 0xFF, 0x00, 0xFF, 0xFF);
 			break;
-		case SDLK_LEFT:
-			SDL_SetRenderDrawColor(mRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
+		case SDL_KEYDOWN:
+			switch (mEvent.key.keysym.sym)
+			{
+			case SDLK_RIGHT:
+			{
+				auto temp = new Ball(rand() % kScreenWidth, rand() % kScreenHeight, 100, 100, mRenderer);
+				mObjects.push_back(temp);
+				break;
+			}
+			case SDLK_LEFT:
+			{
+				if (!mObjects.empty())
+				{
+					auto o = mObjects.begin();
+					std::advance(o, rand() % mObjects.size());
+					delete* o;
+					mObjects.erase(o);
+				}
+				break;
+			}
+			default:
+				break;
+			}
 			break;
-		case SDLK_SPACE:
-		{
-			auto temp = new Object("images/ball.bmp", rand() % kScreenWidth, rand() % kScreenHeight, 50, 50, mRenderer);
-			mObjects.push_back(temp);
-			break;
-		}
 		default:
 			break;
 		}
@@ -113,8 +123,6 @@ void Game::poll_events()
 Game::Game() : mWindow(nullptr), mSurface(nullptr), mRenderer(nullptr), mBackgroundImage(nullptr), mBackground(nullptr), mQuit(false)
 {
 	mQuit = !init_sdl() || !init_window() || !init_renderer() || !load_background();
-	auto temp = new Object("images/ball.bmp", 50, 50, 50, 50, mRenderer);
-	mObjects.push_back(temp);
 }
 
 Game::~Game()
@@ -154,18 +162,12 @@ void Game::run()
 void Game::render()
 {
 	SDL_RenderCopy(mRenderer, mBackground, nullptr, nullptr);
+
 	for(const auto &i : mObjects)
 	{
 		i->render();
 	}
 
-	/*for (auto image = mObjects.begin(); image < mObjects.end(); image++)
-	{
-		image->render();
-		uint16_t x, y;
-		image->getPos(x, y);
-		printf("rendering object at x: %d,\ty: %d\n", x, y);
-	}*/
 	//Update the surface
 	SDL_RenderPresent(mRenderer);
 }
