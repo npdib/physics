@@ -29,7 +29,7 @@ private:
 	SDL_Surface* mBackgroundImage;
 	SDL_Texture* mBackground;
 
-	std::list<Object> mObjects;
+	std::list<Object*> mObjects;
 
 	bool mQuit;
 

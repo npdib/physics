@@ -1,5 +1,7 @@
 #include "Game.h"
 
+#include <vcruntime_typeinfo.h>
+
 // private:
 
 bool Game::init_sdl()
@@ -96,7 +98,7 @@ void Game::poll_events()
 			break;
 		case SDLK_SPACE:
 		{
-			Object temp("images/ball.bmp", rand() % kScreenWidth, rand() % kScreenHeight, 50, 50, mRenderer);
+			auto temp = new Object("images/ball.bmp", rand() % kScreenWidth, rand() % kScreenHeight, 50, 50, mRenderer);
 			mObjects.push_back(temp);
 			break;
 		}
@@ -111,7 +113,7 @@ void Game::poll_events()
 Game::Game() : mWindow(nullptr), mSurface(nullptr), mRenderer(nullptr), mBackgroundImage(nullptr), mBackground(nullptr), mQuit(false)
 {
 	mQuit = !init_sdl() || !init_window() || !init_renderer() || !load_background();
-	Object temp("images/ball.bmp", 50, 50, 50, 50, mRenderer);
+	auto temp = new Object("images/ball.bmp", 50, 50, 50, 50, mRenderer);
 	mObjects.push_back(temp);
 }
 
@@ -151,13 +153,10 @@ void Game::run()
 
 void Game::render()
 {
-	int counter = 0;
 	SDL_RenderCopy(mRenderer, mBackground, nullptr, nullptr);
-	for(auto it = mObjects.begin(); it != mObjects.end(); ++it)
+	for(const auto &i : mObjects)
 	{
-		it->render();
-		counter++;
-		printf("rendered %d ball", counter);
+		i->render();
 	}
 
 	/*for (auto image = mObjects.begin(); image < mObjects.end(); image++)
